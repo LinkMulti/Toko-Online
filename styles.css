@@ -1,0 +1,122 @@
+CSS
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.hero-section {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                      url('https://images.unsplash.com/photo-1472851294608-062f824d288b?q=80&w=1920');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+.content h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.content p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    color: #e0e0e0;
+}
+
+.category-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.card-btn {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 30px 20px;
+    width: 250px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.card-btn h3 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.card-btn:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.3);
+    border-color: #00adb5;
+    box-shadow: 0 12px 20px rgba(0, 173, 181, 0.4);
+}
+/* --- KODE TAMBAHAN UNTUK HALAMAN KATALOG DALAM --- */
+body.katalog-page {
+    background: #f4f6f9;
+    padding: 40px 20px;
+    text-align: center;
+    color: #333;
+    height: auto; /* Membatalkan 100vh dari halaman utama */
+    display: block; /* Membatalkan flex dari halaman utama */
+}
+
+.back-btn {
+    display: inline-block;
+    margin-bottom: 30px;
+    padding: 10px 20px;
+    background: #00adb5;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.back-btn:hover { background: #333; }
+
+.product-title { margin-bottom: 30px; }
+
+.grid {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    width: 280px;
+    text-align: left;
+}
+.card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.card h3 { margin: 15px 0 5px 0; }
+.price { font-weight: bold; color: #00adb5; margin-bottom: 15px; }
+.buy-btn {
+    display: block;
+    text-align: center;
+    background: #222831;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    border-radius: 6px;
+}
