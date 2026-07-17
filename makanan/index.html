@@ -6,61 +6,207 @@
     <title>Katalog Makanan - Toko Kami</title>
     <!-- MENGHUBUNGKAN KE FILE STYLES.CSS DI FOLDER UTAMA -->
     <link rel="stylesheet" href="../styles.css">
+
+    <style>
+        /* Desain Tombol Lihat Deskripsi Baru */
+        .desc-btn {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 8px; /* Jarak ke tombol WA */
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        .desc-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Gaya latar belakang hitam transparan untuk Pop-up */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); 
+        }
+
+        /* Kotak putih konten di tengah screen */
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            width: 85%;
+            max-width: 450px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Tombol silang (X) untuk tutup */
+        .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .close-btn:hover { color: #000; }
+
+        /* Mengatur gambar di dalam Pop-up */
+        .modal-content img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .modal-content h2 { margin-bottom: 10px; color: #333; }
+        .modal-content p { color: #666; font-size: 15px; line-height: 1.5; }
+    </style>
 </head>
-<!-- Menggunakan class 'katalog-page' agar desainnya tidak berantakan dengan halaman utama -->
+
 <body class="katalog-page">
     <a href="../index.html" class="back-btn">⬅️ Kembali ke Menu Utama</a>
     <h1 class="product-title"> Katalog Produk makananan</h1>
+    
     <div class="grid">
         <div class="card">
-    <!-- Ganti src-nya mengarah ke folder images dan nama foto Anda -->
             <img src="../images/bolupisang-gpt.jpeg" alt="Bolu Pisang">
             <h3>Bolu Pisang</h3>
             <p class="price">Rp 25.000</p>
+            <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
+        
         <div class="card">
             <img src="../images/bolususukeju-gpt.jpeg" alt="bolususukeju-gpt">
             <h3>Bolu susu Keju</h3>
             <p class="price">Rp 30.000</p>
+            <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
+        
         <div class="card">
             <img src="../images/kuepisangjadul.PNG" alt="kuepisangjadul">
             <h3>Kue Pisang</h3>
             <p class="price">Rp 4.000 </p>
+            <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
+        
         <div class="card">
             <img src="../images/Pancakpisang-gpt.jpeg" alt="Pancakpisang-gpt">
             <h3>Kue Pisang</h3>
             <p class="price">Rp 12.000 </p>
+            <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
+        
         <div class="card">
             <img src="../images/rotisobeklovegpt.jpeg" alt="rotisobeklovegpt">
             <h3>Roti Sobek Love</h3>
             <p class="price">Rp 20.000 </p>
+            <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
+        
         <div class="card">
             <img src="../images/Pancakpisang-gpt.jpeg" alt="Pancakpisang-gpt">
             <h3>Pancak Pisang</h3>
             <p class="price">Rp 10.000 </p>
+            <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
+        
         <div class="card">
             <img src="../images/bolumekargpt.png" alt="bolumekargpt">
             <h3>Bolu Mekar</h3>
             <p class="price">Rp 10.000 </p>
+            <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
+        
         <div class="card">
             <img src="../images/PisangnuggetGPT.png" alt="PisangnuggetGPT">
             <h3>Pisang Nugget</h3>
-            <p class="price">Rp 10000 </p>
+            <p class="price">Rp 10.000 </p>
+            <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
     </div>
+
+    <!-- ================= KOTAK POP-UP MODAL ================= -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <img id="modalImg" src="" alt="Foto Produk">
+            <h2 id="modalTitle">Nama Produk</h2>
+            <p id="modalDescription">Deskripsi Produk</p>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT AKSI KLIK TOMBOL ================= -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const modal = document.getElementById("productModal");
+            const modalImg = document.getElementById("modalImg");
+            const modalTitle = document.getElementById("modalTitle");
+            const modalDesc = document.getElementById("modalDescription");
+            const closeBtn = document.querySelector(".close-btn");
+
+            // Kumpulan database deskripsi menu makanan kamu
+            const dataDeskripsi = {
+                "Bolu Pisang": "Bolu pisang premium dengan aroma khas yang harum, tekstur super lembut dan manis alami buah pisang pilihan.",
+                "Bolu susu Keju": "Kombinasi bolu susu yang gurih lembut dipadukan dengan parutan keju melimpah di atasnya.",
+                "Kue Pisang": "Kue pisang tradisional rasanya legit, manis, dan pas untuk teman bersantai bersama keluarga.",
+                "Roti Sobek Love": "Roti sobek lembut berbentuk hati dengan isian cokelat melimpah. Sangat cocok dinikmati bersama orang tersayang.",
+                "Pancak Pisang": "Pancake lembut ala rumahan dengan potongan pisang segar di atasnya dan siraman madu asli.",
+                "Bolu Mekar": "Bolu mekar jadul yang merekah sempurna, teksturnya empuk, ringan, dan bikin nostalgia.",
+                "Pisang Nugget": "Pisang nugget krispi dengan toping premium yang melimpah. Manis, gurih, dan kriuk di setiap gigitan!"
+            };
+
+            // Pasang fungsi klik ke tombol deskripsi di setiap card produk
+            document.querySelectorAll(".card").forEach(card => {
+                const btn = card.querySelector(".desc-btn");
+                const img = card.querySelector("img");
+                const judul = card.querySelector("h3");
+                
+                if (btn && img && judul) {
+                    btn.addEventListener("click", () => {
+                        const namaProduk = judul.innerText.trim();
+                        
+                        // Isi konten pop-up sesuai produk yang dipilih
+                        modalImg.src = img.src;
+                        modalTitle.innerText = namaProduk;
+                        modalDesc.innerText = dataDeskripsi[namaProduk] || "Deskripsi hidangan lezat ini sedang diracik oleh dapur kami!";
+                        
+                        // Munculkan Pop-up ke layar
+                        modal.style.display = "block";
+                    });
+                }
+            });
+
+            // Klik tombol (X) untuk menutup pop-up
+            if(closeBtn) {
+                closeBtn.addEventListener("click", () => { modal.style.display = "none"; });
+            }
+
+            // Klik area hitam luar pop-up untuk menutup
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) { modal.style.display = "none"; }
+            });
+        });
+    </script>
 </body>
 </html>
