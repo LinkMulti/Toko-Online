@@ -28,7 +28,7 @@
 
         /* Gaya latar belakang hitam transparan untuk Pop-up */
         .modal {
-            display: none; 
+            display: none; /* 🔴 PASTIKAN INI TETAP NONE AGAR SEMBUNYI DI AWAL */
             position: fixed;
             z-index: 9999;
             left: 0;
@@ -36,8 +36,8 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.6); 
-            /* 🟢 Tambahkan dua baris ini untuk membuat konten otomatis di tengah vertikal & horizontal */
-            display: flex;
+            
+            /* 🟢 Pindahkan posisi tengah ke sini tanpa merusak display: none */
             align-items: center;
             justify-content: center;
         }
