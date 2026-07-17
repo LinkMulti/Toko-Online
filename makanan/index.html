@@ -36,12 +36,17 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.6); 
+            /* 🟢 Tambahkan dua baris ini untuk membuat konten otomatis di tengah vertikal & horizontal */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Kotak putih konten di tengah screen */
         .modal-content {
             background-color: #fff;
-            margin: 15% auto;
+            /* 🟢 Ganti margin menjadi 20px saja agar tidak terlalu turun */
+            margin: 20px;
             padding: 20px;
             width: 85%;
             max-width: 450px;
@@ -49,6 +54,9 @@
             text-align: center;
             position: relative;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            /* 🟢 Tambahkan batas tinggi maksimal agar jika layar kecil, isi modal bisa di-scroll */
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         /* Tombol silang (X) untuk tutup */
