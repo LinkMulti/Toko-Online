@@ -3,30 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katalog Elektronik - Toko Kami</title>
+    <title>Katalog Spare Part Lengkap - Toko Kami</title>
     <!-- MENGHUBUNGKAN KE FILE STYLES.CSS DI FOLDER UTAMA -->
     <link rel="stylesheet" href="../styles.css">
+
+    <style>
+        /* Gaya Tombol Filter Kategori */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0 30px 0;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background-color: #fff;
+            color: #333;
+            border: 2px solid #007bff;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Desain Tombol Lihat Deskripsi */
+        .desc-btn {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 8px;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        .desc-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Gaya Pop-up Modal */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); 
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 20px;
+            padding: 20px;
+            width: 85%;
+            max-width: 450px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .close-btn:hover { color: #000; }
+        .modal-content img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .modal-content h2 { margin-bottom: 10px; color: #333; }
+        .modal-content p { color: #666; font-size: 15px; line-height: 1.5; }
+    </style>
 </head>
-<!-- Menggunakan class 'katalog-page' agar desainnya tidak berantakan dengan halaman utama -->
+
 <body class="katalog-page">
     <a href="../index.html" class="back-btn">⬅️ Kembali ke Menu Utama</a>
-    <h1 class="product-title">💻 Katalog Produk Elektronik</h1>
-    <div class="grid">
-        <div class="card">
-    <!-- Ganti src-nya mengarah ke folder images dan nama foto Anda -->
-            <img src="../images/nami.jpeg" alt="Laptop Kerja Pro">
-            <h3>Laptop Kerja Pro</h3>
-            <p class="price">Rp 8.500.000</p>
-            <a href="#" class="buy-btn">Hubungi Penjual</a>
+    <h1 class="product-title">⚙️ Katalog Suku Cadang Elektronik</h1>
+
+    <!-- TOMBOL FILTER KATEGORI -->
+    <div class="filter-container">
+        <button class="filter-btn active" data-category="all">Semua Spare Part</button>
+        <button class="filter-btn" data-category="mesin-cuci">Mesin Cuci</button>
+        <button class="filter-btn" data-category="tv">Televisi (TV)</button>
+        <button class="filter-btn" data-category="speaker">Speaker & Audio</button>
+    </div>
+    
+    <div class="grid" id="productGrid">
+        <!-- ================= KATEGORI: MESIN CUCI ================= -->
+        <div class="card" data-category="mesin-cuci">
+            <img src="../images/pulsator.png" alt="Pulsator Mesin Cuci">
+            <h3>Pulsator Mesin Cuci</h3>
+            <p class="price">Rp 85.000</p>
+            <button class="desc-btn">Lihat Deskripsi</button>
+            <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=500" alt="HP">
-            <h3>Smartphone 5G</h3>
-            <p class="price">Rp 3.499.000</p>
-            <!-- Sesudah diubah -->
+        
+        <div class="card" data-category="mesin-cuci">
+            <img src="../images/inlet-valve.png" alt="Inlet Valve">
+            <h3>Inlet Valve Mesin Cuci</h3>
+            <p class="price">Rp 45.000</p>
+            <button class="desc-btn">Lihat Deskripsi</button>
+            <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
+        </div>
+        
+        <div class="card" data-category="mesin-cuci">
+            <img src="../images/water-level.png" alt="Water Level Sensor">
+            <h3>Water Level Sensor</h3>
+            <p class="price">Rp 35.000</p>
+            <button class="desc-btn">Lihat Deskripsi</button>
+            <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
+        </div>
+
+        <!-- ================= KATEGORI: TV ================= -->
+        <div class="card" data-category="tv">
+            <img src="../images/backlight-tv.png" alt="Backlight LED TV">
+            <h3>Backlight LED TV Universal</h3>
+            <p class="price">Rp 75.000</p>
+            <button class="desc-btn">Lihat Deskripsi</button>
+            <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
+        </div>
+
+        <div class="card" data-category="tv">
+            <img src="../images/power-board-tv.png" alt="Power Supply Board TV">
+            <h3>Power Supply Board TV</h3>
+            <p class="price">Rp 180.000</p>
+            <button class="desc-btn">Lihat Deskripsi</button>
+            <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
+        </div>
+
+        <!-- ================= KATEGORI: SPEAKER ================= -->
+        <div class="card" data-category="speaker">
+            <img src="../images/woofer-speaker.png" alt="Speaker Woofer">
+            <h3>Speaker Woofer 6 Inch</h3>
+            <p class="price">Rp 95.000</p>
+            <button class="desc-btn">Lihat Deskripsi</button>
+            <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
+        </div>
+
+        <div class="card" data-category="speaker">
+            <img src="../images/modul-bluetooth.png" alt="Modul Bluetooth Audio">
+            <h3>Modul Receiver Bluetooth</h3>
+            <p class="price">Rp 25.000</p>
+            <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
     </div>
 
+    <!-- KOTAK POP-UP MODAL -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <img id="modalImg" src="" alt="Foto Produk">
+            <h2 id="modalTitle">Nama Produk</h2>
+            <p id="modalDescription">Deskripsi Produk</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT: FILTER KATEGORI & MODAL DESKRIPSI -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // --- Fitur Filter Kategori ---
+            const filterButtons = document.querySelectorAll(".filter-btn");
+            const cards = document.querySelectorAll(".card");
+
+            filterButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    // Ubah tombol aktif
+                    filterButtons.forEach(btn => btn.classList.remove("active"));
+                    button.classList.add("active");
+
+                    const targetCategory = button.getAttribute("data-category");
+
+                    // Saring produk berdasarkan kelas
+                    cards.forEach(card => {
+                        const cardCategory = card.getAttribute("data-category");
+                        if (targetCategory === "all" || cardCategory === targetCategory) {
+                            card.style.display = "block";
+                        } else {
+                            card.style.display = "none";
+                        }
+                    });
+                });
+            });
+
+            // --- Fitur Pop-up Deskripsi ---
+            const modal = document.getElementById("productModal");
+            const modalImg = document.getElementById("modalImg");
+            const modalTitle = document.getElementById("modalTitle");
+            const modalDesc = document.getElementById("modalDescription");
+            const closeBtn = document.querySelector(".close-btn");
+
+            // Database Deskripsi Multi-Kategori
+            const dataDeskripsi = {
+                // Mesin Cuci
+                "Pulsator Mesin Cuci": "Piringan putar bawah berukuran presisi untuk mesin cuci top loading. Berfungsi menciptakan pusaran air yang kuat agar pakaian bersih maksimal tanpa merusak serat kain. Terbuat dari bahan plastik tebal yang kokoh, anti-selip, dan tahan lama.",
+                "Inlet Valve Mesin Cuci": "Katup solenoid otomatis pengatur aliran masuk air bersih ke dalam tabung mesin cuci. Sangat cocok untuk mengatasi kendala air yang tidak mau mengalir masuk ke tabung atau kran yang bocor terus-menerus akibat karat atau sumbatan kotoran.",
+                "Water Level Sensor": "Sensor tekanan air otomatis (water level switch) untuk mendeteksi batas volume air di dalam mesin cuci. Mengatasi masalah mesin yang macet/error tidak mau memulai proses pencucian, atau air yang meluap terus tanpa henti.",
+                // TV
+                "Backlight LED TV Universal": "Lampu latar belakang (backlight) LED strip untuk TV LCD/LED. Menggunakan komponen berkualitas tinggi yang memberikan pencahayaan layar TV lebih terang, merata, dan memiliki daya tahan panas yang sangat baik.",
+                "Power Supply Board TV": "Modul sirkuit catu daya (power regulator) utama untuk mendistribusikan arus listrik ke seluruh komponen TV. Cocok digunakan sebagai pengganti board TV yang mati total akibat lonjakan tegangan listrik.",
+                // Speaker
+                "Speaker Woofer 6 Inch": "Driver speaker woofer berukuran 6 inci dengan magnet tebal untuk menghasilkan dentuman nada bass yang bulat, dalam, dan jernih. Sangat cocok untuk rakitan sound system rumahan atau audio mobil.",
+                "Modul Receiver Bluetooth": "Papan sirkuit receiver Bluetooth audio mini dengan modul transmisi stabil tanpa delay. Berfungsi mengubah speaker aktif atau amplifier jadul Anda menjadi speaker modern yang bisa memutar musik nirkabel dari HP."
+            };
+
+            // Pasang event klik ke setiap kartu
+            cards.forEach(card => {
+                const btn = card.querySelector(".desc-btn");
+                const img = card.querySelector("img");
+                const judul = card.querySelector("h3");
+                
+                if (btn && img && judul) {
+                    btn.addEventListener("click", () => {
+                        const namaProduk = judul.innerText.trim();
+                        modalImg.src = img.src;
+                        modalTitle.innerText = namaProduk;
+                        modalDesc.innerText = dataDeskripsi[namaProduk] || "Detail spesifikasi spare part ini sedang dipersiapkan.";
+                        modal.style.display = "flex";
+                    });
+                }
+            });
+
+            // Klik (X) untuk tutup
+            if(closeBtn) {
+                closeBtn.addEventListener("click", () => { modal.style.display = "none"; });
+            }
+
+            // Klik luar modal untuk tutup
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) { modal.style.display = "none"; }
+            });
+        });
+    </script>
 </body>
 </html>
