@@ -32,3 +32,31 @@ app.put("/products/:id", (req, res) => {
 });
 
 module.exports = app;
+
+// ROUTE UNTUK POTONG STOK SAAT PEMBELIAN
+app.post("/buy", (req, res) => {
+    const { productId, qty } = req.body;
+    const amount = Number(qty) || 1;
+
+    const productIndex = products.findIndex(p => p.id === productId);
+
+    if (productIndex !== -1) {
+        // Cek apakah stok cukup
+        if (products[productIndex].stock >= amount) {
+            products[productIndex].stock -= amount; // Potong stok
+            
+            return res.json({
+                success: true,
+                message: "Stok berhasil dipotong!",
+                updatedProduct: products[productIndex]
+            });
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: "Stok tidak mencukupi!"
+            });
+        }
+    }
+
+    return res.status(404).json({ success: false, message: "Produk tidak ditemukan!" });
+});
