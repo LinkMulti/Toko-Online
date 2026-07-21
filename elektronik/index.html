@@ -302,7 +302,6 @@
             </div>
         </div>
     </div>
-
     <script>
     const apiURL = "https://backend-stock-six.vercel.app";
 
@@ -310,41 +309,56 @@
         const cards = document.querySelectorAll(".card");
         const filterButtons = document.querySelectorAll(".filter-btn");
 
-        // 1. AMBIL DATA STOK & HARGA DARI BACKEND VERCEL
+        // 1. AMBIL DATA STOK & HARGA DARI BACKEND VERCEL (SAFE-GUARDED)
         function fetchAndRenderProducts() {
             fetch(`${apiURL}/products`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(products => {
-                    products.forEach(prod => {
-                        const cardElement = document.querySelector(`.card[data-id="${prod.id}"]`);
-                        
-                        if (cardElement) {
-                            // Update Harga
-                            const priceElement = cardElement.querySelector(".price");
-                            if (priceElement && prod.price) {
-                                priceElement.innerText = `Rp ${Number(prod.price).toLocaleString('id-ID')}`;
-                            }
+                    if (Array.isArray(products)) {
+                        products.forEach(prod => {
+                            const cardElement = document.querySelector(`.card[data-id="${prod.id}"]`);
+                            
+                            if (cardElement) {
+                                // Update Harga
+                                const priceElement = cardElement.querySelector(".price");
+                                if (priceElement && prod.price) {
+                                    priceElement.innerText = `Rp ${Number(prod.price).toLocaleString('id-ID')}`;
+                                }
 
-                            // Update Stok
-                            const stockElement = document.getElementById(`stock-${prod.id}`);
-                            if (stockElement) {
-                                if (prod.stock > 0) {
-                                    stockElement.innerText = `Stok Tersedia: ${prod.stock} unit`;
-                                    stockElement.classList.remove("stock-out");
-                                } else {
-                                    stockElement.innerText = `Stok Habis!`;
-                                    stockElement.classList.add("stock-out");
+                                // Update Stok
+                                const stockElement = document.getElementById(`stock-${prod.id}`);
+                                if (stockElement) {
+                                    if (prod.stock > 0) {
+                                        stockElement.innerText = `Stok Tersedia: ${prod.stock} unit`;
+                                        stockElement.classList.remove("stock-out");
+                                    } else {
+                                        stockElement.innerText = `Stok Habis!`;
+                                        stockElement.classList.add("stock-out");
+                                    }
                                 }
                             }
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error("Gagal mengambil data produk dari backend:", err);
+                    // FALLBACK: Jika backend delay/error, ubah teks 'Memuat stok...' agar website tidak terlihat rusak
+                    document.querySelectorAll(".stock-info").forEach(el => {
+                        if (el.innerText.includes("Memuat")) {
+                            el.innerText = "Stok Tersedia";
                         }
                     });
-                })
-                .catch(err => console.error("Gagal mengambil data produk:", err));
+                });
         }
         
         fetchAndRenderProducts();
 
-        // 3. FILTER KATEGORI TAB
+        // 2. FILTER KATEGORI TAB
         filterButtons.forEach(btn => {
             btn.addEventListener("click", () => {
                 filterButtons.forEach(b => b.classList.remove("active"));
@@ -361,7 +375,7 @@
             });
         });
 
-        // 4. POP-UP DESKRIPSI PRODUK
+        // 3. POP-UP DESKRIPSI PRODUK
         const modal = document.getElementById("productModal");
         const modalImg = document.getElementById("modalImg");
         const modalTitle = document.getElementById("modalTitle");
@@ -398,7 +412,7 @@
             closeBtn.addEventListener("click", () => { modal.style.display = "none"; });
         }
 
-        // ➕ 5. LOGIC MODAL PEMBELIAN BARU
+        // 4. LOGIC MODAL PEMBELIAN BARU
         const buyModal = document.getElementById("buyModal");
         const buyModalTitle = document.getElementById("buyModalTitle");
         const buyQty = document.getElementById("buyQty");
@@ -411,7 +425,6 @@
 
         let selectedProduct = { id: "", name: "", price: 0 };
 
-        // Buka Modal saat tombol "Beli Sekarang" diklik
         cards.forEach(card => {
             const buyNowBtn = card.querySelector(".buy-now-btn");
             const judul = card.querySelector("h3");
@@ -420,7 +433,6 @@
 
             if (buyNowBtn && judul && hargaText) {
                 buyNowBtn.addEventListener("click", () => {
-                    // Ambil harga berupa angka (menghapus "Rp " dan tanda titik)
                     const priceNumber = parseInt(hargaText.innerText.replace(/[^0-9]/g, "")) || 0;
 
                     selectedProduct = {
@@ -430,91 +442,87 @@
                     };
 
                     buyModalTitle.innerText = `Beli: ${selectedProduct.name}`;
-                    buyQty.value = 1; // Default ke 1 unit saat dibuka
+                    buyQty.value = 1;
                     updateTotalPrice();
                     buyModal.style.display = "flex";
                 });
             }
         });
 
-        // Hitung ulang total harga secara realtime saat Qty diubah
         function updateTotalPrice() {
             const qty = parseInt(buyQty.value) || 1;
             const total = selectedProduct.price * qty;
             buyTotalPrice.innerText = `Rp ${total.toLocaleString('id-ID')}`;
         }
 
-        buyQty.addEventListener("input", updateTotalPrice);
+        if (buyQty) buyQty.addEventListener("input", updateTotalPrice);
 
-        // Sembunyikan/Tampilkan kolom alamat berdasarkan pilihan pengiriman
-        buyShipping.addEventListener("change", function() {
-            if (this.value === "Ambil Sendiri di Toko") {
-                addressGroup.style.display = "none";
-            } else {
-                addressGroup.style.display = "block";
-            }
-        });
+        if (buyShipping) {
+            buyShipping.addEventListener("change", function() {
+                if (this.value === "Ambil Sendiri di Toko") {
+                    addressGroup.style.display = "none";
+                } else {
+                    addressGroup.style.display = "block";
+                }
+            });
+        }
 
-        // Kirim Format Pesanan Rapi ke WhatsApp Penjual
-        confirmCheckoutBtn.addEventListener("click", () => {
-            const qty = parseInt(buyQty.value) || 1;
-            const shipping = buyShipping.value;
-            const address = buyAddress.value.trim();
-            const total = selectedProduct.price * qty;
+        if (confirmCheckoutBtn) {
+            confirmCheckoutBtn.addEventListener("click", () => {
+                const qty = parseInt(buyQty.value) || 1;
+                const shipping = buyShipping.value;
+                const address = buyAddress.value.trim();
+                const total = selectedProduct.price * qty;
 
-            if (shipping === "J&T Express" && !address) {
-                alert("Harap isi alamat lengkap untuk pengiriman via J&T Express!");
-                return;
-            }
+                if (shipping === "J&T Express" && !address) {
+                    alert("Harap isi alamat lengkap untuk pengiriman via J&T Express!");
+                    return;
+                }
 
-            let pesan = `Halo Kak, saya mau beli produk berikut:\n\n`;
-            pesan += `📦 *Produk:* ${selectedProduct.name}\n`;
-            pesan += `🔢 *Jumlah:* ${qty} unit\n`;
-            pesan += `💰 *Total Harga:* Rp ${total.toLocaleString('id-ID')}\n`;
-            pesan += `🚚 *Pengiriman:* ${shipping}\n`;
-            
-            if (shipping === "J&T Express") {
-                pesan += `📍 *Alamat:* ${address}\n`;
-            }
+                let pesan = `Halo Kak, saya mau beli produk berikut:\n\n`;
+                pesan += `📦 *Produk:* ${selectedProduct.name}\n`;
+                pesan += `🔢 *Jumlah:* ${qty} unit\n`;
+                pesan += `💰 *Total Harga:* Rp ${total.toLocaleString('id-ID')}\n`;
+                pesan += `🚚 *Pengiriman:* ${shipping}\n`;
+                
+                if (shipping === "J&T Express") {
+                    pesan += `📍 *Alamat:* ${address}\n`;
+                }
 
-            pesan += `\nMohon diinfokan nomor rekening untuk pembayarannya. Terima kasih!`;
+                pesan += `\nMohon diinfokan nomor rekening untuk pembayarannya. Terima kasih!`;
 
-            // Jalankan API potong stok di backend
-            fetch(`${apiURL}/buy`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ productId: selectedProduct.id, qty: qty })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) fetchAndRenderProducts(); // Update visual stok
-            })
-            .catch(err => console.error("Gagal potong stok:", err));
+                // Potong stok di backend
+                fetch(`${apiURL}/buy`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ productId: selectedProduct.id, qty: qty })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) fetchAndRenderProducts();
+                })
+                .catch(err => console.error("Gagal potong stok:", err));
 
-            // Buka WhatsApp
-            window.open(`https://wa.me/6285159170404?text=${encodeURIComponent(pesan)}`, '_blank');
-            buyModal.style.display = "none";
-        });
+                window.open(`https://wa.me/6285159170404?text=${encodeURIComponent(pesan)}`, '_blank');
+                buyModal.style.display = "none";
+            });
+        }
 
-        // Tutup Modal Pembelian
         if (closeBuyBtn) {
             closeBuyBtn.addEventListener("click", () => { buyModal.style.display = "none"; });
         }
 
-        // Tutup semua modal jika klik di luar area konten modal
         window.addEventListener("click", (e) => {
             if (e.target === modal) { modal.style.display = "none"; }
             if (e.target === buyModal) { buyModal.style.display = "none"; }
         });
     });
 
-    // 6. FUNGSI KONFIRMASI PEMBAYARAN BCA
     function konfirmasiPembayaranBCA() {
         const pesan = encodeURIComponent("Halo Kak, saya sudah transfer via BCA. Mohon diproses pesanan saya, terima kasih!");
         window.open(`https://wa.me/6285159170404?text=${pesan}`, '_blank');
     }
 
-    // 7. FUNGSI LACAK RESI J&T
     function lacakResiJNT() {
         const resi = prompt("Masukkan nomor resi J&T Express Anda:");
         if (resi) {
