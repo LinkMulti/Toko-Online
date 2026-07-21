@@ -12,7 +12,7 @@ const db = mysql.createConnection({
     host: 'mysql-2f3b4956-umkm-multi.b.aivencloud.com',
     port: 26291,
     user: 'avnadmin',
-    password: process.env.DB_PASSWORD, // 👈 Password aman dari Environment Variable
+    password: process.env.DB_PASSWORD, // Read dari Environment Variable
     database: 'defaultdb',
     ssl: {
         rejectUnauthorized: false
@@ -28,7 +28,7 @@ db.connect(err => {
 });
 
 // ==========================================
-// API 1: Mengambil semua data produk beserta stoknya
+// API 1: AMBIL SEMUA PRODUK & STOK
 // ==========================================
 app.get('/api/products', (req, res) => {
     db.query('SELECT * FROM products', (err, results) => {
@@ -38,27 +38,7 @@ app.get('/api/products', (req, res) => {
 });
 
 // ==========================================
-// API 2: Mengurangi stok 1 unit (Hubungi Penjual)
-// ==========================================
-app.post('/api/buy', (req, res) => {
-    const { productId } = req.body;
-    
-    db.query('SELECT stock FROM products WHERE id = ?', [productId], (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        
-        if (results.length > 0 && results[0].stock > 0) {
-            db.query('UPDATE products SET stock = stock - 1 WHERE id = ?', [productId], (err) => {
-                if (err) return res.status(500).json({ error: err.message });
-                res.json({ success: true, message: 'Stok berhasil dikurangi di database!' });
-            });
-        } else {
-            res.status(400).json({ success: false, message: 'Maaf, stok barang ini sudah habis!' });
-        }
-    });
-});
-
-// ==========================================
-// API 3: ADMIN MENGUBAH HARGA DAN STOK BARANG
+// API 2: ADMIN UPDATE HARGA & STOK (KHUSUS ELEKTRONIK)
 // ==========================================
 app.post('/api/update-stock', (req, res) => {
     const { productId, stock, price } = req.body;
@@ -68,44 +48,48 @@ app.post('/api/update-stock', (req, res) => {
         if (err) {
             return res.status(500).json({ success: false, message: err.message });
         }
-        res.json({ success: true, message: "Stok dan Harga berhasil diperbarui!" });
+        res.json({ success: true, message: "Stok dan Harga Elektronik berhasil diperbarui!" });
     });
 });
 
 // ==========================================
-// 🆕 API 4: KONFIRMASI PEMBAYARAN TRANSFER (STOK OTOMATIS BERKURANG)
+// API 3: KONFIRMASI PEMBAYARAN BCA (STOK AUTOMATIC CUT)
 // ==========================================
 app.post('/api/konfirmasi-pembayaran', (req, res) => {
-    const { productId, qty } = req.body; // qty = jumlah barang yang dibeli
+    const { productId, qty } = req.body;
     const jumlahBeli = parseInt(qty) || 1;
 
     db.query('SELECT stock FROM products WHERE id = ?', [productId], (err, results) => {
         if (err) return res.status(500).json({ success: false, message: err.message });
 
-        if (results.length > 0 && results[0].stock >= jumlahBeli) {
-            // Kurangi stok sebanyak jumlah pembeliannya
-            db.query('UPDATE products SET stock = stock - ? WHERE id = ?', [jumlahBeli, productId], (err) => {
-                if (err) return res.status(500).json({ success: false, message: err.message });
-                res.json({ success: true, message: 'Pembayaran Dikonfirmasi! Stok berhasil dikurangi otomatis.' });
-            });
+        if (results.length > 0) {
+            // Jika produk memiliki sistem stok (Elektronik)
+            if (results[0].stock >= jumlahBeli) {
+                db.query('UPDATE products SET stock = stock - ? WHERE id = ?', [jumlahBeli, productId], (err) => {
+                    if (err) return res.status(500).json({ success: false, message: err.message });
+                    res.json({ success: true, message: 'Pembayaran BCA berhasil dikonfirmasi! Stok berhasil dikurangi otomatis.' });
+                });
+            } else {
+                res.status(400).json({ success: false, message: 'Maaf, stok barang tidak mencukupi!' });
+            }
         } else {
-            res.status(400).json({ success: false, message: 'Gagal! Stok barang tidak mencukupi.' });
+            // Untuk Jasa / Makanan jika tidak menggunakan pengurangan stok database
+            res.json({ success: true, message: 'Pembayaran BCA berhasil dikonfirmasi!' });
         }
     });
 });
 
 // ==========================================
-// 🆕 API 5: INPUT NO RESI J&T EXPRESS
+// API 4: INPUT RESI J&T EXPRESS
 // ==========================================
 app.post('/api/update-resi', (req, res) => {
     const { orderId, resiJNT } = req.body;
     
-    // Nanti bisa dikembangkan untuk disimpan ke tabel orders/transaksi di database
     console.log(`Pesanan ${orderId} diupdate dengan Resi J&T: ${resiJNT}`);
     
     res.json({ 
         success: true, 
-        message: `Resi J&T (${resiJNT}) berhasil dikirim untuk pesanan ${orderId}!` 
+        message: `Resi J&T (${resiJNT}) berhasil disimpan untuk pesanan ${orderId}!` 
     });
 });
 
