@@ -120,3 +120,53 @@ body.katalog-page {
     text-decoration: none;
     border-radius: 6px;
 }
+/* Gaya Tombol Beli Utama */
+.buy-now-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 6px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.buy-now-btn:hover {
+    background-color: #218838;
+}
+
+/* Form Pembelian di Dalam Modal */
+.checkout-form {
+    text-align: left;
+    margin-top: 15px;
+}
+.checkout-form label {
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    margin-top: 10px;
+    color: #333;
+}
+.checkout-form input, .checkout-form select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+.total-price-box {
+    background: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 15px;
+    text-align: center;
+}
+.total-price-box span {
+    font-size: 18px;
+    color: #28a745;
+    font-weight: bold;
+}
