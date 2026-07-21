@@ -1,15 +1,9 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "stock/stock.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "stock/stock.js"
+      "source": "/(.*)",
+      "destination": "/api/index.js"
     }
   ]
 }
