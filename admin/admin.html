@@ -33,9 +33,9 @@
                 <option value="pulsator">Pulsator Mesin Cuci</option>
                 <option value="inlet_valve">Inlet Valve Mesin Cuci</option>
                 <option value="water_level_sensor">Water Level Sensor</option>
-                <option value="Backlight_tv">Backlight LED TV Universal</option>
+                <option value="backlight_tv">Backlight LED TV Universal</option>
                 <option value="power_board_tv">Power Supply Board TV</option>
-                <option value="Speaker Woofer ">Speaker Woofer 6 Inch</option>
+                <option value="speaker_woofer">Speaker Woofer 6 Inch</option>
             </select>
         </div>
 
@@ -100,7 +100,7 @@
                 alert("Harga dan Stok Elektronik berhasil diperbarui!");
                 document.getElementById("productForm").reset();
             } else {
-                alert("Gagal mengubah data: " + data.message);
+                alert("Gagal mengubah data: " + (data.message || "Error server"));
             }
         })
         .catch(err => {
@@ -126,7 +126,7 @@
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert(data.message);
+                alert(data.message || "Resi berhasil dikirim!");
                 document.getElementById("jntForm").reset();
             } else {
                 alert("Gagal mengirim resi!");
