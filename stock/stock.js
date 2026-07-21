@@ -2,16 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-// 1. IZINKAN CORS DARI NETLIFY
-app.use(cors({
-    origin: "*", // Mengizinkan semua domain mengakses API ini
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"]
-}));
-
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-// Data Dummy Stok & Harga
 let products = [
     { id: "pulsator", price: 85000, stock: 10 },
     { id: "inlet_valve", price: 45000, stock: 5 },
@@ -22,23 +15,20 @@ let products = [
     { id: "modul_bluetooth", price: 25000, stock: 20 }
 ];
 
-// 2. ROUTE UNTUK MENGAMBIL DATA PRODUK (Penting!)
-app.get("/products", (req, res) => {
-    res.json(products);
+// GET All Products
+app.get("/products", (req, res) => res.json(products));
+
+// PUT Update Product
+app.put("/products/:id", (req, res) => {
+    const { id } = req.params;
+    const { price, stock } = req.body;
+    const index = products.findIndex(p => p.id === id);
+    if (index !== -1) {
+        if (price !== undefined) products[index].price = Number(price);
+        if (stock !== undefined) products[index].stock = Number(stock);
+        return res.json({ success: true, product: products[index] });
+    }
+    res.status(404).json({ success: false, message: "Not found" });
 });
 
-// Route dasar untuk cek server
-app.get("/", (req, res) => {
-    res.send("Backend Vercel Berjalan dengan Baik!");
-});
-
-// 3. EKSPOR UNTUK VERCEL (Penting!)
 module.exports = app;
-
-// Jalankan server jika dites di local (bukan di Vercel)
-if (process.env.NODE_ENV !== "production") {
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
-}
