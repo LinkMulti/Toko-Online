@@ -22,13 +22,18 @@ let products = [
     { id: "modul_bluetooth", price: 25000, stock: 20 }
 ];
 
-// GET: Ambil Semua Produk
-app.get("/products", (req, res) => {
+// Health check endpoint (biar pas buka halaman utama langsung kelihatan)
+app.get("/", (req, res) => {
+    res.json({ status: "OK", message: "API Stok Toko Online Berjalan!" });
+});
+
+// GET: Ambil Semua Produk (Mendukung /products maupun /api/products)
+app.get(["/products", "/api/products"], (req, res) => {
     res.json(products);
 });
 
 // PUT: Update Stok/Harga dari Admin Panel
-app.put("/products/:id", (req, res) => {
+app.put(["/products/:id", "/api/products/:id"], (req, res) => {
     const { id } = req.params;
     const { price, stock } = req.body;
     const index = products.findIndex(p => p.id === id);
@@ -42,7 +47,7 @@ app.put("/products/:id", (req, res) => {
 });
 
 // POST: Potong Stok Saat Pembeli Checkout
-app.post("/buy", (req, res) => {
+app.post(["/buy", "/api/buy"], (req, res) => {
     const { productId, qty } = req.body;
     const amount = Number(qty) || 1;
     const index = products.findIndex(p => p.id === productId);
