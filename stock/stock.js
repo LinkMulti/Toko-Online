@@ -2,9 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-app.use(cors({ origin: "*" }));
+// 1. CORS CONFIGURATION
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"]
+}));
+
 app.use(express.json());
 
+// 2. DATA PRODUCTS DUMMY
 let products = [
     { id: "pulsator", price: 85000, stock: 10 },
     { id: "inlet_valve", price: 45000, stock: 5 },
@@ -15,48 +22,39 @@ let products = [
     { id: "modul_bluetooth", price: 25000, stock: 20 }
 ];
 
-// GET All Products
-app.get("/products", (req, res) => res.json(products));
+// GET: Ambil Semua Produk
+app.get("/products", (req, res) => {
+    res.json(products);
+});
 
-// PUT Update Product
+// PUT: Update Stok/Harga dari Admin Panel
 app.put("/products/:id", (req, res) => {
     const { id } = req.params;
     const { price, stock } = req.body;
     const index = products.findIndex(p => p.id === id);
+
     if (index !== -1) {
         if (price !== undefined) products[index].price = Number(price);
         if (stock !== undefined) products[index].stock = Number(stock);
         return res.json({ success: true, product: products[index] });
     }
-    res.status(404).json({ success: false, message: "Not found" });
+    res.status(404).json({ success: false, message: "Produk tidak ditemukan" });
 });
 
-module.exports = app;
-
-// ROUTE UNTUK POTONG STOK SAAT PEMBELIAN
+// POST: Potong Stok Saat Pembeli Checkout
 app.post("/buy", (req, res) => {
     const { productId, qty } = req.body;
     const amount = Number(qty) || 1;
+    const index = products.findIndex(p => p.id === productId);
 
-    const productIndex = products.findIndex(p => p.id === productId);
-
-    if (productIndex !== -1) {
-        // Cek apakah stok cukup
-        if (products[productIndex].stock >= amount) {
-            products[productIndex].stock -= amount; // Potong stok
-            
-            return res.json({
-                success: true,
-                message: "Stok berhasil dipotong!",
-                updatedProduct: products[productIndex]
-            });
-        } else {
-            return res.status(400).json({
-                success: false,
-                message: "Stok tidak mencukupi!"
-            });
+    if (index !== -1) {
+        if (products[index].stock >= amount) {
+            products[index].stock -= amount;
+            return res.json({ success: true, product: products[index] });
         }
+        return res.status(400).json({ success: false, message: "Stok habis!" });
     }
-
-    return res.status(404).json({ success: false, message: "Produk tidak ditemukan!" });
+    res.status(404).json({ success: false, message: "Produk tidak ditemukan" });
 });
+
+module.exports = app;
