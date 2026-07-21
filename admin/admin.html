@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input & Update Produk - Admin Toko</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; padding: 30px; color: #333; }
+        .container { max-width: 600px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin: 0 auto; }
+        h2 { text-align: center; color: #007bff; margin-bottom: 25px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+        button { width: 100%; background-color: #007bff; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { background-color: #0056b3; }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #007bff; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Update Data Spare Part</h2>
+    
+    <form id="productForm">
+        <div class="form-group">
+            <label for="productId">Pilih Nama Produk:</label>
+            <select id="productId" required>
+                <option value="">-- Pilih Barang --</option>
+                <option value="pulsator">Pulsator Mesin Cuci</option>
+                <option value="inlet_valve">Inlet Valve Mesin Cuci</option>
+                <option value="water_level_sensor">Water Level Sensor</option> <!-- Perbaikan -->
+                <option value="Backlight_tv">Backlight LED TV Universal</option> <!-- Perbaikan kapital -->
+                <option value="power_board_tv">Power Supply Board TV</option> <!-- Perbaikan -->
+                <option value="Speaker Woofer ">Speaker Woofer 6 Inch</option> <!-- Perbaikan spasi & kapital -->
+                <!-- Tambahan menu makanan sesuai database Anda jika perlu: -->
+                <option value="baso_aci">Baso Aci Mercon</option>
+                <option value="seblak_jeletot">Seblak Jeletot Komplit</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="productPrice">Harga Baru (Rp):</label>
+            <input type="number" id="productPrice" min="0" placeholder="Contoh: 85000 (tanpa titik/Rp)" required>
+        </div>
+
+        <div class="form-group">
+            <label for="productStock">Jumlah Stok Baru:</label>
+            <input type="number" id="productStock" min="0" placeholder="Masukkan angka stok terbaru" required>
+        </div>
+
+        <button type="submit">Simpan & Perbarui Data</button>
+    </form>
+
+    <a href="index.html" class="back-link">⬅️ Kembali ke Katalog</a>
+</div>
+<script>
+    const apiURL = "https://backend-stock-six.vercel.app";
+
+    document.getElementById("productForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        // 1. Mengambil nilai dari input HTML dengan benar
+        const idBarang = document.getElementById("productId").value;
+        const hargaBaru = document.getElementById("productPrice").value;
+        const jumlahStok = document.getElementById("productStock").value;
+
+        // 2. Mengirim data stok dan harga baru ke server backend
+        fetch('https://backend-stock-six.vercel.app/update-stock', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId: idBarang,               // Sudah diperbaiki menggunakan variabel yang benar
+                stock: parseInt(jumlahStok),       // Sudah diperbaiki menggunakan variabel yang benar
+                price: parseFloat(hargaBaru)       // Menambahkan harga untuk dikirim ke backend
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("Harga dan Stok berhasil diperbarui di database!");
+                document.getElementById("productForm").reset();
+            } else {
+                alert("Gagal mengubah data: " + data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Gagal terhubung ke server Node.js. Pastikan server sudah dinyalakan!");
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+git config --global user.email "email-github-kuytraveling0@gmail.com"
+
+mysql-2f3b4956-umkm-multi.b.aivencloud.com
+
+XAMPP - masuk aktifkan module apache dan MySQL - buka browser - localhost/phpMyAdmin
+
+masuk ke vs code , cari admin.html - klik start live paling Bawah
+
+127.0.0.1:5500/index.html - link took online
+127.0.0.1:5500/admin/admin.html - link update stock dan barang 
+
+creative-swan-e46700.netlify.app.
+https://creative-swan-e46700.netlify.app/admin/admin.html
+

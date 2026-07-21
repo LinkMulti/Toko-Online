@@ -95,6 +95,17 @@
         }
         .modal-content h2 { margin-bottom: 10px; color: #333; }
         .modal-content p { color: #666; font-size: 15px; line-height: 1.5; }
+        
+        /* Teks Indikator Stok */
+        .stock-info {
+            font-size: 14px;
+            color: #28a745;
+            font-weight: bold;
+            margin: 5px 0 12px 0;
+        }
+        .stock-out {
+            color: #dc3545 !important;
+        }
     </style>
 </head>
 
@@ -112,60 +123,67 @@
     
     <div class="grid" id="productGrid">
         <!-- ================= KATEGORI: MESIN CUCI ================= -->
-        <div class="card" data-category="mesin-cuci">
+        <div class="card" data-category="mesin-cuci" data-id="pulsator">
             <img src="../images/pulsator.png" alt="Pulsator Mesin Cuci">
             <h3>Pulsator Mesin Cuci</h3>
             <p class="price">Rp 85.000</p>
+            <p class="stock-info" id="stock-pulsator">Memuat stok...</p>
             <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
         
-        <div class="card" data-category="mesin-cuci">
+        <div class="card" data-category="mesin-cuci" data-id="inlet_valve">
             <img src="../images/inlet-valve.png" alt="Inlet Valve">
             <h3>Inlet Valve Mesin Cuci</h3>
             <p class="price">Rp 45.000</p>
+            <p class="stock-info" id="stock-inlet_valve">Memuat stok...</p>
             <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
         
-        <div class="card" data-category="mesin-cuci">
+        <div class="card" data-category="mesin-cuci" data-id="water_level_sensor">
             <img src="../images/water-level.png" alt="Water Level Sensor">
             <h3>Water Level Sensor</h3>
             <p class="price">Rp 35.000</p>
+            <p class="stock-info" id="stock-water_level_sensor">Memuat stok...</p>
             <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
 
         <!-- ================= KATEGORI: TV ================= -->
-        <div class="card" data-category="tv">
+        <div class="card" data-category="tv" data-id="backlight_tv">
             <img src="../images/backlight-tv.png" alt="Backlight LED TV">
             <h3>Backlight LED TV Universal</h3>
             <p class="price">Rp 75.000</p>
+            <p class="stock-info" id="stock-backlight_tv">Memuat stok...</p>
             <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
 
-        <div class="card" data-category="tv">
+        <div class="card" data-category="tv" data-id="power_board_tv">
             <img src="../images/power-board-tv.png" alt="Power Supply Board TV">
             <h3>Power Supply Board TV</h3>
             <p class="price">Rp 180.000</p>
+            <p class="stock-info" id="stock-power_board_tv">Memuat stok...</p>
             <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
 
         <!-- ================= KATEGORI: SPEAKER ================= -->
-        <div class="card" data-category="speaker">
+        <div class="card" data-category="speaker" data-id="speaker_woofer">
             <img src="../images/woofer-speaker.png" alt="Speaker Woofer">
             <h3>Speaker Woofer 6 Inch</h3>
             <p class="price">Rp 95.000</p>
+            <p class="stock-info" id="stock-speaker_woofer">Memuat stok...</p>
             <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
 
-        <div class="card" data-category="speaker">
+        <div class="card" data-category="speaker" data-id="modul_bluetooth">
             <img src="../images/modul-bluetooth.png" alt="Modul Bluetooth Audio">
             <h3>Modul Receiver Bluetooth</h3>
             <p class="price">Rp 25.000</p>
+            <p class="stock-info" id="stock-modul_bluetooth">Memuat stok...</p>
             <button class="desc-btn">Lihat Deskripsi</button>
             <a href="https://wa.me/6285159170404" target="_blank" class="buy-btn">Hubungi Penjual</a>
         </div>
@@ -181,81 +199,130 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT: FILTER KATEGORI & MODAL DESKRIPSI -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // --- Fitur Filter Kategori ---
-            const filterButtons = document.querySelectorAll(".filter-btn");
-            const cards = document.querySelectorAll(".card");
+document.addEventListener("DOMContentLoaded", function() {
+    const apiURL = "https://backend-stock-six.vercel.app";
+    const cards = document.querySelectorAll(".card");
+    const filterButtons = document.querySelectorAll(".filter-btn");
 
-            filterButtons.forEach(button => {
-                button.addEventListener("click", () => {
-                    // Ubah tombol aktif
-                    filterButtons.forEach(btn => btn.classList.remove("active"));
-                    button.classList.add("active");
-
-                    const targetCategory = button.getAttribute("data-category");
-
-                    // Saring produk berdasarkan kelas
-                    cards.forEach(card => {
-                        const cardCategory = card.getAttribute("data-category");
-                        if (targetCategory === "all" || cardCategory === targetCategory) {
-                            card.style.display = "block";
-                        } else {
-                            card.style.display = "none";
+    // 1. FUNGSI AMBIL DATA, ATUR TAMPILAN STOK & HARGA DARI DATABASE AIVEN
+    function fetchAndRenderProducts() {
+        fetch(`${apiURL}/products`)
+            .then(response => response.json())
+            .then(products => {
+                products.forEach(prod => {
+                    // Cari card berdasarkan data-id yang cocok dengan id di database
+                    const cardElement = document.querySelector(`.card[data-id="${prod.id}"]`);
+                    
+                    if (cardElement) {
+                        // A. UPDATE HARGA SECARA DINAMIS DARI DATABASE
+                        const priceElement = cardElement.querySelector(".price");
+                        if (priceElement && prod.price) {
+                            // Mengubah angka 80000 menjadi format 'Rp 80.000'
+                            priceElement.innerText = `Rp ${Number(prod.price).toLocaleString('id-ID')}`;
                         }
-                    });
+
+                        // B. UPDATE STOK
+                        const stockElement = document.getElementById(`stock-${prod.id}`);
+                        if (stockElement) {
+                            if (prod.stock > 0) {
+                                stockElement.innerText = `Stok Tersedia: ${prod.stock} unit`;
+                                stockElement.classList.remove("stock-out");
+                            } else {
+                                stockElement.innerText = `Stok Habis!`;
+                                stockElement.classList.add("stock-out");
+                            }
+                        }
+                    }
                 });
+            })
+            .catch(err => console.error("Gagal mengambil data produk:", err));
+    }
+    
+    fetchAndRenderProducts(); // Jalankan pembacaan harga & stok saat web dibuka
+
+    // 2. FUNGSI MEMOTONG STOK KETIKA TOMBOL HUBUNGI PENJUAL DIKLIK
+    cards.forEach(card => {
+        const buyBtn = card.querySelector(".buy-btn");
+        const productId = card.getAttribute("data-id");
+
+        if (buyBtn && productId) {
+            buyBtn.addEventListener("click", function(e) {
+                fetch(`${apiURL}/buy`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ productId: productId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(`Stok ${productId} berhasil dipotong di cloud!`);
+                        fetchAndRenderProducts(); // Refresh harga & stok otomatis
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(err => console.error("Gagal memotong stok:", err));
             });
+        }
+    });
 
-            // --- Fitur Pop-up Deskripsi ---
-            const modal = document.getElementById("productModal");
-            const modalImg = document.getElementById("modalImg");
-            const modalTitle = document.getElementById("modalTitle");
-            const modalDesc = document.getElementById("modalDescription");
-            const closeBtn = document.querySelector(".close-btn");
+    // --- Fitur Filter Kategori Tab ---
+    filterButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            filterButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            const cat = btn.getAttribute("data-category");
 
-            // Database Deskripsi Multi-Kategori
-            const dataDeskripsi = {
-                // Mesin Cuci
-                "Pulsator Mesin Cuci": "Piringan putar bawah berukuran presisi untuk mesin cuci top loading. Berfungsi menciptakan pusaran air yang kuat agar pakaian bersih maksimal tanpa merusak serat kain. Terbuat dari bahan plastik tebal yang kokoh, anti-selip, dan tahan lama.",
-                "Inlet Valve Mesin Cuci": "Katup solenoid otomatis pengatur aliran masuk air bersih ke dalam tabung mesin cuci. Sangat cocok untuk mengatasi kendala air yang tidak mau mengalir masuk ke tabung atau kran yang bocor terus-menerus akibat karat atau sumbatan kotoran.",
-                "Water Level Sensor": "Sensor tekanan air otomatis (water level switch) untuk mendeteksi batas volume air di dalam mesin cuci. Mengatasi masalah mesin yang macet/error tidak mau memulai proses pencucian, atau air yang meluap terus tanpa henti.",
-                // TV
-                "Backlight LED TV Universal": "Lampu latar belakang (backlight) LED strip untuk TV LCD/LED. Menggunakan komponen berkualitas tinggi yang memberikan pencahayaan layar TV lebih terang, merata, dan memiliki daya tahan panas yang sangat baik.",
-                "Power Supply Board TV": "Modul sirkuit catu daya (power regulator) utama untuk mendistribusikan arus listrik ke seluruh komponen TV. Cocok digunakan sebagai pengganti board TV yang mati total akibat lonjakan tegangan listrik.",
-                // Speaker
-                "Speaker Woofer 6 Inch": "Driver speaker woofer berukuran 6 inci dengan magnet tebal untuk menghasilkan dentuman nada bass yang bulat, dalam, dan jernih. Sangat cocok untuk rakitan sound system rumahan atau audio mobil.",
-                "Modul Receiver Bluetooth": "Papan sirkuit receiver Bluetooth audio mini dengan modul transmisi stabil tanpa delay. Berfungsi mengubah speaker aktif atau amplifier jadul Anda menjadi speaker modern yang bisa memutar musik nirkabel dari HP."
-            };
-
-            // Pasang event klik ke setiap kartu
             cards.forEach(card => {
-                const btn = card.querySelector(".desc-btn");
-                const img = card.querySelector("img");
-                const judul = card.querySelector("h3");
-                
-                if (btn && img && judul) {
-                    btn.addEventListener("click", () => {
-                        const namaProduk = judul.innerText.trim();
-                        modalImg.src = img.src;
-                        modalTitle.innerText = namaProduk;
-                        modalDesc.innerText = dataDeskripsi[namaProduk] || "Detail spesifikasi spare part ini sedang dipersiapkan.";
-                        modal.style.display = "flex";
-                    });
+                if (cat === "all" || card.getAttribute("data-category") === cat) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none"; // Sudah diperbaiki dari card.style.style.display
                 }
             });
-
-            // Klik (X) untuk tutup
-            if(closeBtn) {
-                closeBtn.addEventListener("click", () => { modal.style.display = "none"; });
-            }
-
-            // Klik luar modal untuk tutup
-            window.addEventListener("click", (e) => {
-                if (e.target === modal) { modal.style.display = "none"; }
-            });
         });
-    </script>
-</body>
-</html>
+    });
+
+    // --- Fitur Pop-up Deskripsi ---
+    const modal = document.getElementById("productModal");
+    const modalImg = document.getElementById("modalImg");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDesc = document.getElementById("modalDescription");
+    const closeBtn = document.querySelector(".close-btn");
+
+    const dataDeskripsi = {
+        "Pulsator Mesin Cuci": "Piringan putar bawah berukuran presisi untuk mesin cuci top loading. Berfungsi menciptakan pusaran air yang kuat agar pakaian bersih maksimal tanpa merusak serat kain. Terbuat dari bahan plastik tebal yang kokoh, anti-selip, dan tahan lama.",
+        "Inlet Valve Mesin Cuci": "Katup solenoid otomatis pengatur aliran masuk air bersih ke dalam tabung mesin cuci. Sangat cocok untuk mengatasi kendala air yang tidak mau mengalir masuk ke tabung atau kran yang bocor terus-menerus akibat karat atau sumbatan kotoran.",
+        "Water Level Sensor": "Sensor tekanan air otomatis (water level switch) untuk mendeteksi batas volume air di dalam mesin cuci. Mengatasi masalah mesin yang macet/error tidak mau memulai proses pencucian, atau air yang meluap terus tanpa henti.",
+        "Backlight LED TV Universal": "Lampu latar belakang (backlight) LED strip untuk TV LCD/LED. Menggunakan komponen berkualitas tinggi yang memberikan pencahayaan layar TV lebih terang, merata, dan memiliki daya tahan panas yang sangat baik.",
+        "Power Supply Board TV": "Modul sirkuit catu daya (power regulator) utama untuk mendistribusikan arus listrik ke seluruh komponen TV. Cocok digunakan sebagai pengganti board TV yang mati total akibat lonjakan tegangan listrik.",
+        "Speaker Woofer 6 Inch": "Driver speaker woofer berukuran 6 inci dengan magnet tebal untuk menghasilkan dentuman nada bass yang bulat, dalam, dan jernih. Sangat cocok untuk rakitan sound system rumahan atau audio mobil.",
+        "Modul Receiver Bluetooth": "Papan sirkuit receiver Bluetooth audio mini dengan modul transmisi stabil tanpa delay. Berfungsi mengubah speaker aktif atau amplifier jadul Anda menjadi speaker modern yang bisa memutar musik nirkabel dari HP."
+    };
+
+    cards.forEach(card => {
+        const btn = card.querySelector(".desc-btn");
+        const img = card.querySelector("img");
+        const judul = card.querySelector("h3");
+        
+        if (btn && img && judul) {
+            btn.addEventListener("click", () => {
+                const namaProduk = judul.innerText.trim();
+                modalImg.src = img.src;
+                modalTitle.innerText = namaProduk;
+                modalDesc.innerText = dataDeskripsi[namaProduk] || "Detail spesifikasi spare part ini sedang dipersiapkan.";
+                modal.style.display = "flex";
+            });
+        }
+    });
+
+    if(closeBtn) {
+        closeBtn.addEventListener("click", () => { modal.style.display = "none"; });
+    }
+
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) { modal.style.display = "none"; }
+    });
+});
+</script>

@@ -1,0 +1,13 @@
+{
+  "name": "backend-stock",
+  "version": "1.0.0",
+  "main": "stock.js",
+  "scripts": {
+    "start": "node stock.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql2": "^3.0.0"
+  }
+}
