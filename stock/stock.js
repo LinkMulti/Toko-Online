@@ -22,28 +22,23 @@ let products = [
     { id: "modul_bluetooth", price: 25000, stock: 20 }
 ];
 
-// Endpoint GET Data Produk
+// 2. ROUTE UNTUK MENGAMBIL DATA PRODUK (Penting!)
 app.get("/products", (req, res) => {
     res.json(products);
 });
 
-// Endpoint POST Beli / Potong Stok
-app.post("/buy", (req, res) => {
-    const { productId, qty } = req.body;
-    const prod = products.find(p => p.id === productId);
-    
-    if (prod && prod.stock >= qty) {
-        prod.stock -= qty;
-        return res.json({ success: true, message: "Stok berhasil dipotong", stock: prod.stock });
-    }
-    
-    res.status(400).json({ success: false, message: "Stok tidak mencukupi" });
+// Route dasar untuk cek server
+app.get("/", (req, res) => {
+    res.send("Backend Vercel Berjalan dengan Baik!");
 });
 
-// Export untuk Vercel Serverless Function
+// 3. EKSPOR UNTUK VERCEL (Penting!)
 module.exports = app;
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Jalankan server jika dites di local (bukan di Vercel)
+if (process.env.NODE_ENV !== "production") {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
