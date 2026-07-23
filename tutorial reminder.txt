@@ -12,3 +12,6 @@ masuk ke vs code , cari admin.html - klik start live paling Bawah
 creative-swan-e46700.netlify.app.
 https://creative-swan-e46700.netlify.app/admin/admin.html
 
+Tampilan Website (Frontend): Sudah tersimpan di server Netlify."https://olshopmamanan.netlify.app/"
+Logika Backend: Berjalan di server Vercel."https://backend-stock-six.vercel.app/products"
+Database (Stok/Harga): Tersimpan aman di Aiven Cloud.
